@@ -18,20 +18,23 @@ const askForMic = async () => {
   let deviceId = "default"
   const mediaStream = await navigator.mediaDevices.getUserMedia({
       audio: {
-          deviceId: { exact: deviceId },
+          // deviceId: { exact: deviceId },
           channelCount: 1,
           sampleRate: 48000,
       }, video: false
   }).catch((e) => {
       console.log(e)
       buttonEl.textContent = `Error: ${e.name} ${e.message} ${e.stack}`
+      document.body.style.backgroundColor = "red";
 
       document.addEventListener('click', askForMic, { once: true, capture: false, passive: true });
 
   });
   
   console.log(mediaStream)
+  
   const sampleRate = mediaStream.getAudioTracks()[0].getSettings().sampleRate
+  document.body.style.backgroundColor = "orange";
   console.log(sampleRate)
   const audioContext = new AudioContext();
   await audioContext.audioWorklet.addModule('/audio-processor.js')
@@ -49,9 +52,12 @@ const askForMic = async () => {
   audioContext.resume();
   buttonEl.disabled = true;
   buttonEl.textContent = 'Playing...';
+  document.body.style.backgroundColor = "green";
+
 }
 const getMicAccess = async () => {
     buttonEl.disabled = false;
+    document.body.style.backgroundColor = "lightgreen";
     // buttonEl.addEventListener('click', async () => {
     document.addEventListener('click', askForMic, { once: true, capture: false, passive: true });
 }
