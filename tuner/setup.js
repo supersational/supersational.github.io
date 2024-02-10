@@ -46,7 +46,7 @@ const askForMic = async () => {
   document.body.style.backgroundColor = "orange";
   console.log(sampleRate)
   const audioContext = new AudioContext();
-  await audioContext.audioWorklet.addModule('/audio-processor.js')
+  await audioContext.audioWorklet.addModule('./audio-processor.js')
   const pitchDetectionNode = new AudioWorkletNode(audioContext, 'pitch-detection-processor', { processorOptions: { sampleRate: sampleRate } });
 
   pitchDetectionNode.port.onmessage = (e) => {
