@@ -14,40 +14,49 @@ const startAudio = async (context) => {
     oscillator.start();
 };
 
-window.addEventListener('load', async () => {
+const askForMic = async () => {
+  let deviceId = "default"
+  const mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+          deviceId: { exact: deviceId },
+          channelCount: 1,
+          sampleRate: 48000,
+      }, video: false
+  }).catch((e) => {
+      console.log(e)
+      buttonEl.textContent = `Error: ${e.name} ${e.message} ${e.stack}`
+
+      document.addEventListener('click', askForMic, { once: true, capture: false, passive: true });
+
+  });
+  
+  console.log(mediaStream)
+  const sampleRate = mediaStream.getAudioTracks()[0].getSettings().sampleRate
+  console.log(sampleRate)
+  const audioContext = new AudioContext();
+  await audioContext.audioWorklet.addModule('/audio-processor.js')
+  const pitchDetectionNode = new AudioWorkletNode(audioContext, 'pitch-detection-processor', { processorOptions: { sampleRate: sampleRate } });
+
+  pitchDetectionNode.port.onmessage = (e) => {
+      // console.log(Math.round(parseFloat(e.data) * 100) / 100);
+      let [pitch, amplitude] = e.data;
+      pitchCallback(pitch)
+  };
+
+  const sourceNode = audioContext.createMediaStreamSource(mediaStream);
+  sourceNode.connect(pitchDetectionNode);
+
+  audioContext.resume();
+  buttonEl.disabled = true;
+  buttonEl.textContent = 'Playing...';
+}
+const getMicAccess = async () => {
     buttonEl.disabled = false;
     // buttonEl.addEventListener('click', async () => {
-    document.addEventListener('click', async () => {
-        let deviceId = "default"
+    document.addEventListener('click', askForMic, { once: true, capture: false, passive: true });
+}
 
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-                deviceId: { exact: deviceId },
-                channelCount: 1,
-                sampleRate: 48000,
-            }, video: false
-        })
-        console.log(mediaStream)
-        const sampleRate = mediaStream.getAudioTracks()[0].getSettings().sampleRate
-        console.log(sampleRate)
-        const audioContext = new AudioContext();
-        await audioContext.audioWorklet.addModule('/audio-processor.js')
-        const pitchDetectionNode = new AudioWorkletNode(audioContext, 'pitch-detection-processor', { processorOptions: { sampleRate: sampleRate } });
-
-        pitchDetectionNode.port.onmessage = (e) => {
-            // console.log(Math.round(parseFloat(e.data) * 100) / 100);
-            let [pitch, amplitude] = e.data;
-            pitchCallback(pitch)
-        };
-
-        const sourceNode = audioContext.createMediaStreamSource(mediaStream);
-        sourceNode.connect(pitchDetectionNode);
-
-        audioContext.resume();
-        buttonEl.disabled = true;
-        buttonEl.textContent = 'Playing...';
-    }, { once: true, capture: false, passive: true });
-});
+window.addEventListener('load',getMicAccess);
 
 function pitchCallback(pitch) {
     if (pitch < 0) {
