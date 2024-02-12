@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Korg nanoKONTROL2 Replica</title>
+  <script src="https://unpkg.com/input-knob"></script>
+
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+    }
+
+    .controller {
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      width: 100%;
+      max-width: 1157px;
+      font-size: 12px;
+      color: white;
+    }
+
+    .transport,
+    .channels {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .button {
+      background-color: #333;
+      border: 1px solid #555;
+      color: red;
+      padding: 5px;
+      text-align: center;
+      margin: 2px;
+      flex: 0 0 auto;
+      transition: background-color 0.3s;
+    }
+
+    .button:active,
+    .button.active {
+      background-color: white;
+      color: black;
+    }
+
+    .knob {
+      -webkit-appearance: none;
+      /* Override default appearance */
+      width: 40px;
+      /* Adjust as needed */
+      height: 20px;
+      /* Adjust as needed */
+      border: 1px solid #555;
+      background-color: #333;
+      color: red;
+      margin: 2px;
+      flex: 0 0 auto;
+    }
+
+    input[type=range][orient=vertical] {
+      appearance: slider-vertical;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      /* Override default appearance */
+      width: 20px;
+      /* Width of the slider */
+      height: 120px;
+      /* Slider Track height */
+      background: #333;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+      margin: 2px;
+      flex: 0 0 auto;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      /* Override default appearance */
+      appearance: none;
+      width: 20px;
+      /* Slider handle width */
+      height: 20px;
+      /* Slider handle height */
+      background: red;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      /* Slider handle width */
+      height: 20px;
+      /* Slider handle height */
+      background: red;
+      cursor: pointer;
+    }
+
+    .channel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .channel:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 5px;
+      /* Adjust as needed */
+    }
+  </style>
+</head>
+
+<body>
+  <style>
+    /* https://github.com/GoogleChromeLabs/input-knob */
+    input-knob {
+      width: 20px;
+      padding: 10px;
+      /* border: 2px dashed green; */
+      /* background: lightgreen; */
+      transform: rotate(45deg);
+
+    }
+
+    input-knob::part(rotator) {
+      box-sizing: border-box;
+      background: lightblue;
+      border: 2px dashed blue;
+      border-radius: 100%;
+      width: 20px;
+      height: 20px;
+
+    }
+
+    .mark {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      font: bold 200% monospace;
+      color: blue;
+    }
+  </style>
+
+  <input-knob value="127" scale="170" min="0" max="127">
+    <div class="mark">▲</div>
+  </input-knob>
+  <div class="controller">
+    <div class="transport">
+      <!-- Transport buttons -->
+      <button class="button">
+        << TRACK</button>
+          <button class="button">TRACK >></button>
+          <button class="button">CYCLE</button>
+          <button class="button">MARKER SET</button>
+          <button class="button">
+            << MARKER</button>
+              <button class="button">MARKER >></button>
+              <button class="button">PLAY</button>
+              <button class="button">STOP</button>
+              <button class="button">REC</button>
+    </div>
+    <div class="channels" id="channels">
+      <!-- Channels will be generated via JavaScript -->
+    </div>
+  </div>
+  <div id="pattern">
+    <pre id="pattern-code">
+
+    </pre>
+    <span id="info">
+      Provides a pattern of vibration and pause intervals. Each value indicates a number of milliseconds to vibrate or pause, in alternation. You may provide either a single value (to vibrate once for that many milliseconds) or an array of values to alternately vibrate, pause, then vibrate again. See Vibration API for details.
+
+Passing a value of 0, an empty array, or an array containing all zeros will cancel any currently ongoing vibration pattern.
+    </span>
+  </div>
+
+  <script>
+    // Get the channels container
+    const channelsContainer = document.getElementById('channels');
+
+    // Function to create a channel
+    function createChannel(channelIndex) {
+      const channel = document.createElement('div');
+      channel.className = 'channel';
+
+      const knob = document.createElement('input');
+      knob.type = 'number';
+      knob.className = 'knob';
+      channel.appendChild(knob);
+
+
+      // Create controls container
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+
+      const buttonsContainer = document.createElement('div');
+      buttonsContainer.className = 'buttons';
+
+      ['S', 'M', 'R'].forEach(label => {
+        const button = document.createElement('button');
+        button.id = `${label.toLowerCase()}-button-${channelIndex}`;
+        button.className = 'button';
+        button.textContent = label;
+        buttonsContainer.appendChild(button);
+      });
+      controls.appendChild(buttonsContainer);
+
+      // Add slider (range input)
+      const slider = document.createElement('input');
+      slider.type = 'range';
+      slider.className = 'slider';
+      slider.id = `slider-${channelIndex}`;
+      slider.min = 0;
+      slider.max = 127;
+      slider.defaultValue = 63; // Center position
+      slider.orientation = 'vertical'; // This may not be necessary depending on browser support
+      slider.setAttribute('orient', 'vertical');
+
+      controls.appendChild(slider);
+
+      channel.appendChild(controls);
+
+      return channel;
+    }
+
+    // Generate 8 channels
+    for (let i = 0; i < 8; i++) {
+      channelsContainer.appendChild(createChannel(i));
+    }
+  </script>
+
+  <script>
+
+    function onMIDISuccess(midiAccess) {
+      // console.log('MIDI Access Object', midiAccess);
+      // Listen for MIDI messages
+      midiAccess.inputs.forEach(function (input) {
+        input.onmidimessage = onMIDIMessage;
+      });
+    }
+    // Add your MIDI input handling code here
+    function onMIDIMessage(message) {
+      // console.log('MIDI Message', message);
+      const [command, controller, value] = message.data;
+      console.log(command, controller, value);
+      // Check if the command is a control change message
+      if (command === 176) {
+        // Calculate the column based on the controller number
+        const column = controller % 8;
+        // console.log(column);
+        // Determine the type of control based on the controller number
+        if (controller >= 0 && controller < 16) {
+          // Slider
+          const slider = document.querySelector(`#slider-${column}`);
+          // console.log(slider);
+          if (slider) {
+            slider.setAttribute('value', value);
+            setSlider(column, value)
+          }
+        } else if (controller >= 32 && controller < 48) {
+          // S button
+          const sButton = document.querySelector(`#s-button-${column}`);
+          // console.log(sButton);
+          if (sButton) {
+            sButton.classList.toggle('active', value > 0);
+          }
+        } else if (controller >= 48 && controller < 64) {
+          // M button (is toggle)
+          const mButton = document.querySelector(`#m-button-${column}`);
+          if (mButton) {
+            mButton.classList.toggle('active', value > 0);
+          }
+        } else if (controller >= 64 && controller < 80) {
+          // R button
+          const rButton = document.querySelector(`#r-button-${column}`);
+          if (rButton) {
+            rButton.classList.toggle('active', value > 0);
+          }
+        }
+      }
+    }
+
+    // document.getElementById('startButton').addEventListener('click', function() {
+    // Request MIDI access
+    if (navigator.requestMIDIAccess) {
+      navigator.requestMIDIAccess().then(onMIDISuccess, () => console.log('Could not access your MIDI devices.'));
+    } else {
+      console.log('WebMIDI is not supported in this browser.');
+    }
+
+
+    let pattern = [];
+    let patternLen = 0;
+    const setSlider = (column, value) => {
+      patternLen = Math.max(patternLen, column);
+      pattern[column] = value;
+      for (let i = 0; i < patternLen; i++) {
+        pattern[i] = pattern[i] || 0;
+      }
+      document.getElementById('pattern-code').textContent = pattern.join(' ');
+      vibrate(pattern)
+    }
+
+    let vibrateActivated = false;
+    const vibrate = (args) => {
+      if (!vibrateActivated) return;
+
+      // Vibrate the device to indicate start
+      if (navigator.vibrate) {
+        navigator.vibrate(args);
+      }
+    }
+
+    document.addEventListener('click', () => {
+      vibrateActivated = true;
+      vibrate(10)
+    }, { once: true, capture: false, passive: true });
+  </script>
+</body>
+
+</html>
