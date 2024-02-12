@@ -7,6 +7,12 @@
             width: 100px;
             height: 100px;
         }
+        input {
+            width: 100%;
+            height: 50px;
+        }
+
+
     </style>
     <script>
         let lastDuration = 0;
@@ -56,7 +62,9 @@
 <body>
     <button id="button-vibrate" onclick="stop()">To vibrate DnD must be off!</button>
     <button id="button-start" onclick="start()">Start</button>
-    
+    <!-- range input for lastDuration -->
+    <input type="range" min="0" max="1000" value="0" id="lastDuration" oninput="lastDuration = parseInt(this.value); console.log(lastDuration)">
+    <input type="range" min="0" max="1000" value="0" id="lastDuration" oninput="pauseDuration = parseInt(this.value); console.log(pauseDuration)">
 </body>
 
 </html>
