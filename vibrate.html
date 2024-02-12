@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <title>AudioWorker</title>
+    <style>
+        button {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+    <script>
+        let lastDuration = 0;
+        let pauseDuration = 20;
+        function vibrate(duration) {
+            console.log(duration)
+            navigator.vibrate(duration);
+            lastDuration = duration;
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+          
+            document.body.innerHTML += `<br><br><br>`
+            for (let i = 0; i < 20; i++) {
+                let vibrationDuration = i * 20;
+                document.body.innerHTML += `
+                <button onclick="vibrate(${vibrationDuration})">
+                    ${vibrationDuration}ms
+                    </button>`
+                }
+                document.body.innerHTML += `<br><br><br>`
+            for (let i = 0; i < 20; i++) {
+                let vibrationDuration = i * 20;
+                document.body.innerHTML += `
+                <button onclick="pauseDuration = ${vibrationDuration}">
+                    ${vibrationDuration}ms
+                </button>`
+            }
+        })
+        let vInterval;
+        function stop() {
+            navigator.vibrate(0);
+            if (vInterval) {
+                clearInterval(vInterval);
+            }
+        }
+        function start() {
+            const tick = () => {
+                console.log("tick", lastDuration, pauseDuration);
+                navigator.vibrate([lastDuration, pauseDuration]);
+                vInterval = setTimeout(tick, lastDuration + pauseDuration); 
+            }
+            vInterval = setTimeout(tick, 0);
+        }
+    </script>
+</head>
+
+<body>
+    <button id="button-vibrate" onclick="stop()">To vibrate DnD must be off!</button>
+    <button id="button-start" onclick="start()">Start</button>
+    
+</body>
+
+</html>
