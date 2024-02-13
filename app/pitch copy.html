@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aubio Pitch</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+
+  <style>
+    html {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      height: 100%;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      z-index: -1;
+    }
+
+    audio {
+      margin: 8px;
+    }
+
+    #pitch,
+    #pitch2 {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 5vw;
+    }
+
+    #pitch {
+      top: 20%;
+    }
+
+    #pitch2 {
+      top: 40%;
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas></canvas>
+  <div id="pitch"></div>
+  <div id="pitch2"></div>
+  <!-- <audio src="http://mr3.doubanio.com/2489a904675881096cbec9863f1d55c7/2/fm/song/p456508_128k.mp3" crossorigin="anonymous" controls></audio> -->
+  <audio src="./left_channel.mp3" crossorigin="anonymous" controls></audio>
+
+  <script type="module">
+    const DO_AUBIO = false;
+    const DO_Q = true;
+    import aubio from "https://cdn.jsdelivr.net/npm/aubiojs@0.2.1/build/aubio.esm.js";
+    let audioSource, audioContext, scriptProcessor;
+    let count = 0;
+    const audio = document.querySelector("audio");
+    const maxFrequency = 2000;
+    const bufferSize = 1 << 12;
+    console.log({ bufferSize });
+    const size = bufferSize / (1 << 10);
+    console.log({ size });
+    audio.addEventListener("play", run);
+
+    const pitch = document.getElementById("pitch");
+    const pitch2 = document.getElementById("pitch2");
+
+    const $canvas = document.querySelector("canvas");
+    const canvasContext = $canvas.getContext("2d");
+    function run() {
+      if (audioContext) return;
+
+      audioContext = new (AudioContext || webkitAudioContext)();
+      scriptProcessor = audioContext.createScriptProcessor(bufferSize, 1, 1);
+      audioSource = audioContext.createMediaElementSource(audio);
+      audioSource.connect(scriptProcessor);
+      audioSource.connect(audioContext.destination);
+      scriptProcessor.connect(audioContext.destination);
+
+      $canvas.width = document.body.clientWidth;
+      $canvas.height = document.body.clientHeight;
+
+      aubio().then(({ Pitch }) => {
+        let prevXY = [undefined, undefined];
+        const pitchDetector = new Pitch(
+          "fcomb",
+          scriptProcessor.bufferSize * 4,
+          scriptProcessor.bufferSize,
+          audioContext.sampleRate
+        );
+        console.log({ pitchDetector })
+        addMyPitch(audioContext, audioSource)
+
+        if (!DO_AUBIO) return;
+        scriptProcessor.addEventListener("audioprocess", function (event) {
+          if (audio.paused) return;
+
+          const data = event.inputBuffer.getChannelData(0);
+          const frequency = pitchDetector.do(data);
+          const x = (count * size) % $canvas.width;
+
+          if (x < size) {
+            canvasContext.clearRect(0, 0, $canvas.width, $canvas.height);
+            canvasContext.beginPath();
+          }
+
+          if (frequency) {
+            pitch.innerHTML = frequency.toFixed(1) + " Hz";
+            const y =
+              $canvas.height - (frequency / maxFrequency) * $canvas.height;
+
+            canvasContext.beginPath();
+            canvasContext.strokeStyle = '#000000';
+            canvasContext.moveTo(prevXY[0], prevXY[1]);
+            canvasContext.lineTo(x, y);
+            canvasContext.stroke();
+            prevXY = [x, y];
+          }
+
+          count += 1;
+        });
+
+
+      });
+    }
+    let prevXY2 = [undefined, undefined];
+    async function addMyPitch(audioContext, audioSource) {
+      const sampleRate = audioContext.sampleRate
+
+      await audioContext.audioWorklet.addModule('../audio-processor.js')
+      const pitchDetectionNode = new AudioWorkletNode(audioContext, 'pitch-detection-processor', { processorOptions: { sampleRate: sampleRate } });
+      console.log(pitchDetectionNode)
+
+      pitchDetectionNode.port.onmessage = (e) => {
+        if (!DO_Q) return;
+
+        // console.log(Math.round(parseFloat(e.data) * 100) / 100);
+        let [frequency, amplitude] = e.data;
+
+        if (frequency < 0) return;
+        pitch2.innerHTML = frequency.toFixed(1) + " Hz";
+        // console.log(frequency)
+        const x = (count * size) % $canvas.width;
+
+        if (x < size) {
+          canvasContext.clearRect(0, 0, $canvas.width, $canvas.height);
+          canvasContext.beginPath();
+        }
+
+        const y =
+          $canvas.height - (frequency / maxFrequency) * $canvas.height;
+        // console.log(canvasContext.strokeStyle)
+        canvasContext.beginPath();
+        canvasContext.strokeStyle = '#F00';
+        canvasContext.lineTo(prevXY2[0], prevXY2[1]);
+        canvasContext.lineTo(x, y);
+        canvasContext.stroke();
+        prevXY2 = [x, y];
+        if (!DO_AUBIO) count += 1;
+      };
+      audioSource.connect(pitchDetectionNode);
+
+    }
+  </script>
+</body>
+
+</html>
