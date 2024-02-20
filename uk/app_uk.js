@@ -1,27 +1,22 @@
-function checkImage(url) {
-    return fetch(url, { method: 'HEAD' })
-        .then(res => {
-            if (res.ok) {
-                return url; // Image exists
-            } else {
-                throw new Error('Image not found');
-            }
-        }).catch(error => {
-            console.log(error.message);
-            return null; // Handle the error or return a fallback image URL
-        });
-}
-async function getPicsList() {
-    let response = await fetch('./pics')
-    let html = await response.text()
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    const links = Array.from(doc.querySelectorAll('a[href$=".webp"]')); // Select all <a> tags with href ending in ".webp"
-    let fileLinks = links.map(link => decodeURI(link.href).split('/'));
-    fileLinks = fileLinks.map(link => link[link.length - 1].split(".")[0]);
-    return fileLinks;
+async function getPicsList() {
+    if (window.location.href.includes("localhost")) {
+        let response = await fetch('./pics')
+        let html = await response.text()
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const links = Array.from(doc.querySelectorAll('a[href$=".webp"]')); // Select all <a> tags with href ending in ".webp"
+        let fileLinks = links.map(link => decodeURI(link.href).split('/'));
+        fileLinks = fileLinks.map(link => link[link.length - 1].split(".")[0]);
+        return fileLinks;
+    } else {
+        let response = await fetch('./filelist.json')
+        let files = await response.json()
+        return files.map(file => file.replace(".webp", ""))
+    }
 }
+
 
 let hoveredElement = null;
 
