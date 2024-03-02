@@ -1,0 +1,442 @@
+:root {
+    --bg: #1f1f1f;
+    --header-bg: #1f1f1f;
+    --header-bg-top: #1f1f1f;
+}
+
+.content-module {
+    margin-bottom: 16px;
+}
+
+html.accuweather {
+    font-family: Solis, Arial, Helvetica, sans-serif !important;
+}
+
+html.accuweather body {
+    -webkit-font-smoothing: antialiased;
+    color: rgb(0, 0, 0);
+    font-stretch: normal;
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: normal;
+    margin: 0px;
+    overscroll-behavior: none;
+}
+
+html.accuweather body,
+html.accuweather body.new-ui.conditional-background {
+    background-color: rgb(228, 234, 242);
+}
+
+.template-root {
+    position: relative;
+    display: block !important;
+}
+
+.two-column-page-content {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    display: flex;
+    flex-direction: row;
+    margin: 0px 24px 24px;
+    max-width: 960px;
+}
+
+.two-column-page-content .page-column-1 {
+    margin-right: 24px;
+    width: calc(100% - 328px);
+}
+
+.minute-cast-chart .base-chart-inner {
+    display: flex;
+    overflow: hidden;
+}
+
+.minute-cast-chart #minuteCastVisual {
+    width: 1600px;
+}
+
+.minute-cast-chart .base-chart-left {
+    border-bottom: 1px solid rgb(0, 0, 0);
+    border-right: 1px solid rgb(0, 0, 0);
+    border-top: 1px solid rgb(204, 204, 204);
+    flex-shrink: 0;
+    height: 168px;
+    margin-top: 28px;
+    text-align: center;
+}
+
+.minute-cast-chart .base-chart-left svg {
+    margin-top: -15px;
+}
+
+.minute-cast-chart .base-chart-container {
+    margin-top: -20px;
+}
+
+.minute-cast-chart .mc-x-line {
+    transform: translateY(30px);
+}
+
+.minute-cast-chart .empty-bar {
+    height: 99%;
+    transform: translateY(1px);
+}
+
+.minute-cast-chart .plotline-circle {
+    fill: rgb(255, 255, 255);
+    stroke-width: 2;
+    stroke: rgb(31, 31, 31);
+}
+
+.minute-cast-chart .plotline-line {
+    stroke-width: 1px;
+    stroke: rgb(31, 31, 31);
+}
+
+.minute-cast-chart .current-summary {
+    padding: 16px 12px 0px;
+}
+
+.minute-cast-chart .current-summary .summary {
+    font-size: 16px;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.minute-cast-chart .current-summary .conditions {
+    -webkit-box-pack: justify;
+    display: flex;
+    justify-content: space-between;
+}
+
+.minute-cast-chart .current-summary .conditions .conditions-icon {
+    -webkit-box-align: center;
+    align-items: center;
+    display: flex;
+}
+
+.minute-cast-chart .current-summary .conditions .conditions-icon .time {
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.minute-cast-chart .current-summary .conditions .conditions-icon .icon {
+    margin-right: 8px;
+}
+
+.minute-cast-chart .current-summary .conditions .conditions-icon .icon-phrase {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.minute-cast-chart .current-summary .conditions .temps .current-temp {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.17;
+}
+
+.minute-cast-chart .current-summary .conditions .temps .current-temp-unit {
+    font-size: 12px;
+    line-height: 1.33;
+}
+
+.minute-cast-chart .current-summary .conditions .temps .realfeel-temp {
+    font-size: 12px;
+    line-height: 1.33;
+    opacity: 0.5;
+}
+
+.minute-cast-chart #minutecast.base-chart-container {
+    margin-bottom: 12px;
+    padding: 0px;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .base-chart {
+    -webkit-box-flex: 1;
+    box-sizing: content-box;
+    flex-grow: 1;
+    /* overflow: scroll hidden; */
+    overflow:  hidden;
+    scrollbar-width: none;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .x-labels tspan {
+    font-size: 12px;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .x-lines {
+    stroke-dasharray: 4;
+    stroke-width: 1;
+    stroke: rgb(31, 31, 31);
+    opacity: 0.2;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .y-labels {
+    text-anchor: end;
+    font-size: 15px;
+    text-transform: capitalize;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .y-labels tspan {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .bottom-line {
+    stroke-width: 1px;
+    stroke: rgb(0, 0, 0);
+    opacity: 1;
+}
+
+.minute-cast-chart #minutecast.base-chart-container #precipitation-AL {
+    display: none;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .base-chart-inner {
+    margin-bottom: 0px;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .base-chart-controls {
+    border: none;
+    height: 168px;
+    margin-top: 28px;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .base-chart-controls .forward-button {
+    border: none;
+}
+
+.minute-cast-chart #minutecast.base-chart-container .base-chart-controls .back-button {
+    border-bottom: 1px solid rgb(0, 0, 0);
+}
+
+.minute-cast-chart .chart-legend {
+    padding-bottom: 12px;
+}
+
+.minute-cast-chart .base-chart-controls {
+    border: 1px solid rgb(204, 204, 204);
+    flex-shrink: 0;
+    margin-top: 50px;
+    width: 24px;
+}
+
+.minute-cast-chart .base-chart-controls .control-button {
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 50%;
+    justify-content: center;
+}
+
+.minute-cast-chart .base-chart-controls .control-button.forward-button {
+    border-bottom: 1px solid rgb(204, 204, 204);
+}
+
+.minute-cast-chart .base-chart-controls .control-button.disabled {
+    cursor: default;
+    pointer-events: none;
+}
+
+.minute-cast-chart .base-chart-controls .control-button.disabled .chevron {
+    fill: rgb(204, 204, 204);
+}
+
+.chevron-icon {
+    fill: rgb(0, 0, 0);
+    transition: transform 0.2s ease 0s, -webkit-transform 0.2s ease 0s;
+}
+
+.chevron-icon.right {
+    transform: rotate(-90deg);
+}
+
+.chevron-icon.left {
+    transform: rotate(90deg);
+}
+
+.radar-legend {
+    -webkit-box-align: center;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.radar-legend .legend-item {
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.radar-legend .legend-item:not(:last-child) {
+    margin-right: 4px;
+}
+
+.radar-legend .legend-item .label {
+    color: rgb(0, 0, 0);
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+.radar-legend .legend-item .block {
+    border-radius: 8px;
+    height: 8px;
+    width: 8px;
+}
+
+.radar-legend .legend-item .block:not(:last-child) {
+    margin-right: 3px;
+}
+
+.radar-legend .legend-item.rain .c-1 {
+    background-color: rgb(147, 199, 1);
+}
+
+.radar-legend .legend-item.rain .c-2 {
+    background-color: rgb(255, 215, 1);
+}
+
+.radar-legend .legend-item.rain .c-3 {
+    background-color: rgb(240, 85, 20);
+}
+
+.radar-legend .legend-item.rain .c-4 {
+    background-color: rgb(220, 37, 14);
+}
+
+.radar-legend .legend-item.snow .c-1 {
+    background-color: rgb(158, 200, 242);
+}
+
+.radar-legend .legend-item.snow .c-2 {
+    background-color: rgb(42, 143, 219);
+}
+
+.radar-legend .legend-item.snow .c-3 {
+    background-color: rgb(20, 75, 237);
+}
+
+.radar-legend .legend-item.snow .c-4 {
+    background-color: rgb(2, 0, 150);
+}
+
+.radar-legend .legend-item.ice .c-1 {
+    background-color: rgb(230, 165, 200);
+}
+
+.radar-legend .legend-item.ice .c-2 {
+    background-color: rgb(210, 79, 160);
+}
+
+.radar-legend .legend-item.ice .c-3 {
+    background-color: rgb(183, 22, 145);
+}
+
+.radar-legend .legend-item.ice .c-4 {
+    background-color: rgb(122, 21, 112);
+}
+
+.radar-legend .legend-item.mix .c-1 {
+    background-color: rgb(193, 150, 230);
+}
+
+.radar-legend .legend-item.mix .c-2 {
+    background-color: rgb(174, 110, 230);
+}
+
+.radar-legend .legend-item.mix .c-3 {
+    background-color: rgb(138, 50, 215);
+}
+
+.radar-legend .legend-item.mix .c-4 {
+    background-color: rgb(101, 0, 186);
+}
+
+a,
+abbr,
+acronym,
+address,
+applet,
+article,
+aside,
+audio,
+big,
+blockquote,
+body,
+canvas,
+caption,
+center,
+cite,
+code,
+dd,
+details,
+dfn,
+div,
+dl,
+dt,
+embed,
+fieldset,
+figcaption,
+figure,
+footer,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+hgroup,
+html,
+iframe,
+img,
+input,
+kbd,
+label,
+legend,
+menu,
+nav,
+object,
+output,
+p,
+pre,
+q,
+ruby,
+s,
+samp,
+section,
+select,
+span,
+summary,
+table,
+tbody,
+td,
+tfoot,
+th,
+thead,
+time,
+tr,
+tt,
+u,
+var,
+video {
+    border: 0px;
+    box-sizing: border-box;
+    font: inherit;
+    margin: 0px;
+    padding: 0px;
+    vertical-align: baseline;
+}
+
+body {
+    line-height: 1;
+}
