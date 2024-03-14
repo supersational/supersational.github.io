@@ -2,12 +2,12 @@
 
 <head>
 
-    <script src="./makedraggable.old.js">
-    </script>
+    <!-- <script src="./makedraggable.old.js"> -->
+    <!-- </script> -->
     <link rel="stylesheet" href="./style.css">
 </head>
 
-<body class="minutecast full-animation rfphrase-disabled">
+<body class="minutecast full-animation rfphrase-disabled" style="background-color: white;">
     <style>
         @font-face {
             font-family: 'Solis';
@@ -18,7 +18,7 @@
         }
     </style>
     <div class="template-root">
-        <div class="two-column-page-content ">
+        <div class="two-column-page-content" style="margin:0px;">
             <div class="page-column-1" style="width: 100%; max-width: 840px;">
                 <div class="page-content content-module">
                     <div class="minute-cast-chart">
@@ -31,8 +31,6 @@
     </div>
     <script>
         let url = 'https://corsproxy.io/?' + encodeURIComponent('https://www.accuweather.com/en/gb/bristol/bs1-6/minute-weather-forecast/327328?t=' + (new Date()).setSeconds(0,0));
-        // let url = 'https://crossorigin.me/' +          encodeURIComponent('https://www.accuweather.com/en/gb/bristol/bs1-6/minute-weather-forecast/327328');
-        // url = 'https://www.accuweather.com/en/gb/bristol/bs1-6/minute-weather-forecast/327328'
         console.log("Getting data from", url);
         fetch(url, {
             "headers": {
@@ -52,49 +50,30 @@
             "referrerPolicy": "strict-origin-when-cross-origin",
             "body": null,
             "method": "GET",
-            //   "mode": "cors",
-            //   "credentials": "include"
         }).then(response => response.text()).then(data => {
-            // console.log(data);
             // parse as HTML
 
             let parser = new DOMParser();
             let doc = parser.parseFromString(data, 'text/html');
             [...doc.getElementsByTagName("script")].forEach(s => s.remove());
             [...doc.getElementsByTagName("style")].forEach(s => s.remove());
-            // console.log(doc);
-            // let html = doc.getElementById("minuteCastVisual").outerHTML;
+            doc.getElementById("PointersGroup").remove();
+            doc.querySelector('.base-chart-controls').remove()
+            doc.querySelector('.base-chart-inner').style = "width: 100vw;overflow-x: scroll;"
+            doc.querySelector('.base-chart').style = "overflow: auto;"
+            doc.querySelector('.base-chart-legend').style = "margin-top: 10px; margin-left: 50px;"
+            doc.querySelector('.temps').style = "margin-top: 13px;"
+            doc.querySelector('.conditions').style = "margin: 10px;"
+            doc.querySelector('.time').parentNode.appendChild(doc.querySelector('.time'))
+
             let html = doc.querySelector(".minute-cast-chart").innerHTML;
-            // <!-- replace /images/weathericons/ with ./icons/ -->
             html = html.replace(/\/images\/weathericons\/0/g, "./icons/");
             html = html.replace(/\/images\/weathericons\//g, "./icons/");
             // replace RealFeel® with RealFeel
             // html = html.replace("RealFeel®", "RealFeel");
-            // remove all scripts
 
-            // document.querySelector(".base-chart").innerHTML = html;
             document.querySelector(".minute-cast-chart").innerHTML = html;
             document.querySelector('.realfeel-temp__label').textContent = "RealFeel";
-            // document.querySelector('.base-chart-inner').style.width = "1680px"
-            document.querySelector('.base-chart-inner').style.width = "840px"
-            document.querySelector("svg").setAttribute("viewBox", "0 30 840 200");
-            // document.querySelector("svg").setAttribute("width", "840");
-
-            // base svg:
-            // <svg version="1.1" width="1680" height="200" id="minuteCastVisual" viewBox="0 0 1680 200" onload="makeDraggable(this)" xmlns="http://www.w3.org/2000/svg">
-            // make another svg element that is a view into the minuteCastVisual svg
-            let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.innerHTML = `<use xlink:href="#minuteCastVisual" />`
-            // svg.setAttribute("width", "840");
-            svg.setAttribute("height", "200");
-            svg.setAttribute("viewBox", "840 30 1680 200");
-            document.querySelector('.base-chart').appendChild(svg);
-            document.querySelector('.base-chart').style.backgroundColor = "white";
-            document.querySelector('.base-chart-container').style.marginTop = "40px";
-            document.querySelector('.base-chart-controls').remove()
-            document.querySelector('.base-chart-left').remove()
-            makeDraggable(document.querySelector("svg"));
-            // makeDraggable(document.querySelectorAll("svg")[1]);
         });
     </script>
 </body>
