@@ -144,8 +144,8 @@
     </div>
     <script src="./flappy-bird.js"></script>
     <script type="module">
-      const USE_AVERAGE = true;
 
+      const USE_AVERAGE = true;
       let head_shoulder_value = false;
       window.addEventListener("DOMContentLoaded", function () {
         let head_shoulder_toggle = document.getElementById("head-or-shoulders");
@@ -167,7 +167,31 @@
         head_shoulder_toggled()
       })
 
+      let videoHeight, videoWidth, video, canvasElement, screenSize;
+      const updateScreenSize = () => {
 
+        // get size of screen
+        screenSize = {
+          width: window.innerWidth,
+          height: window.innerHeight
+        };
+
+        // For mobile devices, crop the sides
+        let aspectRatio = 4 / 3;
+        let desiredWidth = screenSize.height * aspectRatio;
+        let cropAmount = (screenSize.width - desiredWidth) / 2;
+        screenSize.width = desiredWidth;
+        // Crop the sides
+        document.getElementById("flappy_canvas").style.marginLeft = `${-cropAmount}px`;
+        videoHeight = `${screenSize.height}px`;
+        videoWidth = `${screenSize.width}px`;
+        video = document.querySelector("#webcam");
+        canvasElement = document.querySelector("#output_canvas");
+        window.setSize(screenSize.width, screenSize.height);
+        console.log(document.getElementById("flappy_canvas"))
+      }
+      // resize listener
+      window.addEventListener("resize", updateScreenSize);
 
       import smoothLandmarks from "./smooth-landmarks.js"
       console.log(smoothLandmarks)
@@ -199,33 +223,7 @@
 
 
       let webcamRunning = false;
-      // get size of screen
-      let screenSize = {
-        width: window.innerWidth,
-        height: window.innerHeight
-      };
-      // Check if the screen width is greater than the height
-      if (screenSize.width > screenSize.height) {
-        // Adjust to 4:3 aspect ratio
-        if (screenSize.width / 4 > screenSize.height / 3) {
-          screenSize.width = screenSize.height * 4 / 3;
-        } else {
-          screenSize.height = screenSize.width * 3 / 4;
-        }
-      } else {
-        // For mobile devices, crop the sides
-        let aspectRatio = 4 / 3;
-        let desiredWidth = screenSize.height * aspectRatio;
-        let cropAmount = (screenSize.width - desiredWidth) / 2;
-        screenSize.width = desiredWidth;
-        // Crop the sides
-        document.getElementById("flappy_canvas").style.marginLeft = `${-cropAmount}px`;
-        console.log(document.getElementById("flappy_canvas"))
-      }
-      const videoHeight = `${screenSize.height}px`;
-      const videoWidth = `${screenSize.width}px`;
-      const video = document.querySelector("#webcam");
-      const canvasElement = document.querySelector("#output_canvas");
+      updateScreenSize();
       // const video = document.querySelector(".input_video");
       // const canvasElement = document.querySelector(".output_canvas");
       console.log(canvasElement)
@@ -272,7 +270,7 @@
           console.log("got stream")
           video.srcObject = stream;
           video.addEventListener("loadeddata", predictWebcam);
-          window.setSize(screenSize.width, screenSize.height);
+          updateScreenSize()
           window.startGame();
         });
       }
