@@ -182,7 +182,13 @@
         let cropAmount = (screenSize.width - desiredWidth) / 2;
         screenSize.width = desiredWidth;
         // Crop the sides
-        document.getElementById("flappy_canvas").style.marginLeft = `${-cropAmount}px`;
+        console.log(cropAmount)
+        if (cropAmount < 0) {
+          document.getElementById("flappy_canvas").style.marginLeft = `${-cropAmount}px`;
+        } else {
+          document.getElementById("flappy_canvas").style.marginLeft = `${0}px`;
+        }
+
         videoHeight = `${screenSize.height}px`;
         videoWidth = `${screenSize.width}px`;
         video = document.querySelector("#webcam");
