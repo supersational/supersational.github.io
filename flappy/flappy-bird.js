@@ -89,13 +89,13 @@ function draw() {
         ctx.drawImage(pipeNorth, pipe[i].x, pipe[i].y);
         ctx.drawImage(pipeSouth, pipe[i].x, pipe[i].y + pipeNorthHeight + gap);
         if (gameState == "running") {
-            // pipe[i].x -= 0.75 * 2
+            pipe[i].x -= 0.75 * (is_hard_value+1)
 
             let x_overlap = bX + bird.width  >= pipe[i].x && bX + 0.4 * bird.width <= pipe[i].x + pipeWidth;
             let y_top_overlap = bY + bird.height * y_forgiveness <= pipe[i].y + pipeNorthHeight;
             let y_bottom_overlap = bY + bird.height * (1-y_forgiveness) >= pipe[i].y + pipeNorthHeight+ gap;
             // detect collision
-            if (i == 0) console.log( y_top_overlap, y_bottom_overlap);
+            // if (i == 0) console.log( y_top_overlap, y_bottom_overlap);
             if (x_overlap && (y_top_overlap || y_bottom_overlap)
             ) {
                 // location.reload(); // reload the page
@@ -170,3 +170,26 @@ window.setSize = function (width, height) {
 
 
 
+
+
+
+let is_hard_value = false;
+window.addEventListener("DOMContentLoaded", function () {
+  let hard_toggle = document.getElementById("hard");
+  let hard_toggle_label = document.getElementById("hard-label");
+  console.log(hard_toggle);
+  const hard_toggled = () => {
+    hard_toggle_label.innerText = !hard_toggle.checked ? "Easy" : "Hard";
+    is_hard_value = hard_toggle.checked;
+    let urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('hard', is_hard_value);
+    window.history.pushState({}, '', '?' + urlParams.toString());
+
+  }
+  hard_toggle.addEventListener("change", hard_toggled);
+  // get start value from query string
+  let urlParams = new URLSearchParams(window.location.search);
+  is_hard_value = urlParams.get('hard');
+  hard_toggle.checked = is_hard_value == "true";
+  hard_toggled()
+})

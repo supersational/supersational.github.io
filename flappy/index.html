@@ -50,6 +50,8 @@
     .toggle {
       cursor: pointer;
       display: inline-block;
+      margin-top: 5px;
+      margin-bottom: 5px;
     }
 
     .toggle-switch {
@@ -61,38 +63,39 @@
       position: relative;
       vertical-align: middle;
       transition: background 0.25s;
-
-      &:before,
-      &:after {
-        content: "";
-      }
-
-      &:before {
-        display: block;
-        background: linear-gradient(to bottom, #fff 0%, #eee 100%);
-        border-radius: 50%;
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
-        width: 24px;
-        height: 24px;
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        transition: left 0.25s;
-      }
-
-      .toggle:hover &:before {
-        background: linear-gradient(to bottom, #fff 0%, #fff 100%);
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
-      }
-
-      .toggle-checkbox:checked+& {
-        background: $green;
-
-        &:before {
-          left: 30px;
-        }
-      }
     }
+
+    .toggle-switch:before,
+    .toggle-switch:after {
+      content: "";
+    }
+
+    .toggle-switch:before {
+      display: block;
+      background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      transition: left 0.25s;
+    }
+
+    .toggle-switch:hover:before {
+      background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+    }
+
+    .toggle-checkbox:checked+.toggle-switch {
+      background: lightblue;
+    }
+
+    .toggle-checkbox:checked+.toggle-switch:before {
+      left: 30px;
+    }
+
 
     .toggle-checkbox {
       position: absolute;
@@ -131,13 +134,13 @@
       <label class="toggle" style="width:150px !important;">
         <input class=" toggle-checkbox" type="checkbox" id="head-or-shoulders">
         <div class="toggle-switch"></div>
-        <span class="toggle-label" id="head-or-shoulders-label">Head</span>
+        <span class="toggle-label" id="head-or-shoulders-label"></span>
       </label>
-      <!-- <label class="toggle">
-        <input class=" toggle-checkbox" type="checkbox" id="smooth">
+      <label class="toggle">
+        <input class=" toggle-checkbox" type="checkbox" id="hard">
         <div class="toggle-switch"></div>
-        <span class="toggle-label" id="smooth-label">Smooth</span>
-      </label> -->
+        <span class="toggle-label" id="hard-label">Hard</span>
+      </label>
     </div>
     <script src="./flappy-bird.js"></script>
     <script type="module">
@@ -201,11 +204,23 @@
         width: window.innerWidth,
         height: window.innerHeight
       };
-      // adjust to 4:3 aspect ratio (keep in bounds
-      if (screenSize.width / 4 > screenSize.height / 3) {
-        screenSize.width = screenSize.height * 4 / 3;
+      // Check if the screen width is greater than the height
+      if (screenSize.width > screenSize.height) {
+        // Adjust to 4:3 aspect ratio
+        if (screenSize.width / 4 > screenSize.height / 3) {
+          screenSize.width = screenSize.height * 4 / 3;
+        } else {
+          screenSize.height = screenSize.width * 3 / 4;
+        }
       } else {
-        screenSize.height = screenSize.width * 3 / 4;
+        // For mobile devices, crop the sides
+        let aspectRatio = 4 / 3;
+        let desiredWidth = screenSize.height * aspectRatio;
+        let cropAmount = (screenSize.width - desiredWidth) / 2;
+        screenSize.width = desiredWidth;
+        // Crop the sides
+        document.getElementById("flappy_canvas").style.marginLeft = `${-cropAmount}px`;
+        console.log(document.getElementById("flappy_canvas"))
       }
       const videoHeight = `${screenSize.height}px`;
       const videoWidth = `${screenSize.width}px`;
